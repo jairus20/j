@@ -1,0 +1,149 @@
+/* Hero section styling */
+.hero-title-cgyc {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  padding: 60px 0;
+  margin-top: 60px;
+  text-align: center;
+  color: var(--text-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-title-cgyc::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../img/pattern.png');
+  opacity: 0.1;
+}
+
+.hero-title-cgyc h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0;
+  position: relative;
+  animation: slideInDown 0.5s ease-out;
+}
+
+/* Filters section styling */
+.filters-section {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 90px;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Cards styling */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 10px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-5px);
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-body h5 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.card-body p {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.card-footer {
+  background: rgba(52, 152, 219, 0.1);
+  border-top: none;
+  padding: 1rem 1.5rem;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-title-cgyc {
+    padding: 40px 0;
+    margin-top: 50px;
+  }
+  
+  .hero-title-cgyc h2 {
+    font-size: 2rem;
+  }
+  
+  .filters-section {
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}

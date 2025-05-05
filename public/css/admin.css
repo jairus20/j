@@ -1,0 +1,981 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* --- VARIABLES Y BASE --- */
+:root {
+    --primary-color: #2c3e50;    /* Dark blue */
+    --accent-color: #125f92;     /* Bright blue */
+    --hover-color: #2980b9;      /* Darker blue for hover */
+    --secondary-color: #3c8dbc;  /* Admin blue */
+    --text-light: #ecf0f1;
+    --text-dark: #2c3e50;
+    --gradient-start: #e8f4f8;
+    --gradient-end: #b6d4e8;
+    --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --card-radius: 15px;
+    --border-radius: 15px;
+    --civil-color: rgba(46, 204, 113, 0.9);
+    --industrial-color: rgba(231, 76, 60, 0.9);
+    --sistemas-color: rgba(52, 152, 219, 0.9);
+    --arquitectura-color: rgba(155, 89, 182, 0.9);
+    --light: #f6f6f6;
+    --dark: #2f2f2f;
+    --grey: #8d8d8d;
+    --danger: #dc3545;
+    --sidebar-width: 280px;
+    --navbar-height: 64px;
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--light);
+}
+
+/* Sidebar styles */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100%;
+    background: var(--dark);
+    z-index: 2000;
+    transition: all 0.3s ease;
+    transform: translateX(0); /* Asegurar que por defecto esté visible */
+}
+
+#sidebar.collapsed {
+    transform: translateX(-100%); /* Usar transform en lugar de margin o width */
+}
+
+#sidebar .brand {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    height: var(--navbar-height);
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 24px;
+    text-decoration: none;
+}
+
+#sidebar .brand i {
+    min-width: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sidebar .side-menu {
+    width: 100%;
+    margin-top: 48px;
+}
+
+#sidebar .side-menu li {
+    height: 48px;
+    background: transparent;
+    margin-left: 6px;
+    border-radius: 48px 0 0 48px;
+    padding: 4px;
+    list-style: none;
+    position: relative;
+}
+
+#sidebar .side-menu li.active {
+    background: var(--light);
+}
+
+/* Remove or modify the pseudo-elements that create the circles */
+#sidebar .side-menu li.active::before,
+#sidebar .side-menu li.active::after {
+    display: none; /* This removes the circles completely */
+}
+
+#sidebar .side-menu li a {
+    width: 100%;
+    height: 100%;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    border-radius: 48px;
+    font-size: 16px;
+    color: var(--light);
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-decoration: none;
+    padding: 0 12px;
+}
+
+#sidebar .side-menu li.active a {
+    color: var(--dark);
+    background: var(--light);
+}
+
+/* Sidebar collapse styles */
+#sidebar-toggle {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+#sidebar-toggle:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+/* Content area */
+#content {
+    position: relative;
+    left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: all 0.3s ease;
+    min-height: 100vh;
+    background: #f4f6f9;
+}
+
+body.sidebar-collapsed #content {
+    left: 0;
+    width: 100%;
+}
+
+body.sidebar-collapsed #content nav {
+    left: 0;
+    width: 100%;
+}
+
+#content.expanded {
+    left: 0;
+    width: 100%;
+}
+
+/* Navbar styles */
+#content nav {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    height: var(--navbar-height);
+    background: #fff;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+#content.expanded nav {
+    left: 0;
+    width: 100%;
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Ocultar el formulario de búsqueda */
+#content nav form {
+    display: none; /* Oculta el formulario de búsqueda */
+}
+
+#content nav .bx.bx-menu {
+    cursor: pointer;
+    color: var(--dark);
+}
+
+#content nav .switch-mode {
+    display: block;
+    min-width: 50px;
+    height: 25px;
+    border-radius: 25px;
+    background: var(--grey);
+    cursor: pointer;
+    position: relative;
+}
+
+#content nav .switch-mode::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    width: 21px;
+    background: var(--light);
+    border-radius: 50%;
+    transition: .3s ease;
+}
+
+#content nav #switch-mode:checked + .switch-mode::before {
+    left: calc(100% - 23px);
+    background: var(--dark);
+}
+
+#content nav .profile img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Main content area */
+main {
+    width: 100%;
+    padding: calc(var(--navbar-height) + 24px) 24px 24px;
+}
+
+/* Ajustes del área de contenido principal */
+.main-content {
+    padding: 10px;
+    width: 100%;
+}
+
+/* Contenedor para las tablas y formularios */
+.content-wrapper {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilos base para todas las tablas */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    background: transparent;
+}
+
+/* Encabezados de tabla - ajustar el tamaño del texto y el peso */
+.table thead th {
+    background-color: #2c3e50 !important;
+    color: #ffffff !important;
+    padding: 15px;
+    font-weight: 500 !important; /* Ajuste del peso de la fuente */
+    font-size: 0.95em !important; /* Ajuste del tamaño de la fuente */
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border: none;
+    vertical-align: middle;
+}
+
+/* Asegurar consistencia en todos los encabezados */
+.table th,
+.table thead th,
+.table-striped thead th,
+.table-hover thead th,
+.table th[class],
+.table thead th[class] {
+    background-color: #2c3e50 !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    font-size: 0.95em !important;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Filas del cuerpo */
+.table tbody tr {
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* Filas pares */
+.table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* Celdas de la tabla */
+.table td {
+    padding: 15px;
+    vertical-align: middle;
+    color: #212529;
+    font-size: 1.05em;
+    border: none;
+    background-color: inherit !important;
+}
+
+/* Efecto hover en las filas */
+.table tbody tr:hover {
+    background-color: #e8f4ff;
+    transform: translateX(5px);
+}
+
+/* Asegurar que todas las celdas hereden el color de fondo de la fila */
+.table td:nth-child(n),
+.table td[class],
+.table th[class] {
+    background-color: inherit !important;
+}
+
+/* Botones de acción */
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    margin: 0 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-info {
+    background-color: #3c8dbc;
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #2d6d94;
+    transform: translateY(-2px);
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:hover .bx {
+    transform: rotate(360deg);
+}
+
+/* Mejorar visibilidad y estilo del botón de cerrar modal */
+.btn-close {
+    width: 2.2rem;
+    height: 2.2rem;
+    background: transparent;
+    border: none;
+    opacity: 0.85;
+    position: relative;
+    padding: 0;
+}
+.btn-close::before, .btn-close::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.2rem;
+    height: 2px;
+    background: #333;
+    border-radius: 2px;
+}
+.btn-close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.btn-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+.btn-close:focus, .btn-close:hover {
+    opacity: 1;
+    outline: 2px solid #3c8dbc;
+    box-shadow: 0 0 0 2px #3c8dbc33;
+    background: #e8f4ff;
+}
+
+/* Modal dialog responsive: ancho máximo y scroll si es necesario */
+.modal-dialog {
+    max-width: 800px !important;
+    margin: 1.75rem auto;
+    padding: 0 15px;
+}
+
+.modal-content {
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body {
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: calc(85vh - 120px); /* Account for header and footer */
+}
+
+.modal-body .row {
+    margin: 0 -5px;
+}
+
+.modal-body .row > [class*="col-"] {
+    padding: 0 5px;
+}
+
+.modal-body .form-control {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-body .mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Table inside modal */
+.modal-body .table-responsive {
+    margin-top: 1rem;
+    padding: 0;
+    box-shadow: none;
+}
+
+.modal-body .table {
+    margin: 0;
+    min-width: 100%;
+}
+
+/* Modal body scrollable si hay mucho contenido */
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Estilos específicos para el modal de tareas */
+#tareasModal .modal-xl {
+    max-width: 98vw;  /* Usar casi todo el ancho de la ventana */
+}
+
+#tareasModal .modal-body {
+    padding: 1.5rem;
+}
+
+#tareasModal .table-responsive {
+    margin: 0;
+    padding: 0;
+}
+
+#tareasModal .table {
+    margin: 0;
+    min-width: auto;
+    width: 100%;
+}
+
+/* Ajustar anchos de columnas en la tabla de tareas */
+#tareasModal .table th,
+#tareasModal .table td {
+    padding: 1rem;
+    white-space: nowrap;
+}
+
+#tareasModal .table th:nth-child(1),  /* Código */
+#tareasModal .table td:nth-child(1) {
+    min-width: 120px;
+}
+
+#tareasModal .table th:nth-child(2),  /* Actividad Operativa */
+#tareasModal .table td:nth-child(2) {
+    min-width: 300px;
+    white-space: normal; /* Permitir wrap en descripción */
+}
+
+#tareasModal .table th:nth-child(3),  /* Tipo */
+#tareasModal .table td:nth-child(3) {
+    min-width: 150px;
+}
+
+#tareasModal .table th:nth-child(4), /* Trimestres */
+#tareasModal .table th:nth-child(5),
+#tareasModal .table th:nth-child(6),
+#tareasModal .table th:nth-child(7),
+#tareasModal .table td:nth-child(4),
+#tareasModal .table td:nth-child(5),
+#tareasModal .table td:nth-child(6),
+#tareasModal .table td:nth-child(7) {
+    min-width: 100px;
+    text-align: center;
+}
+
+#tareasModal .table th:nth-child(8),  /* Monto */
+#tareasModal .table td:nth-child(8) {
+    min-width: 120px;
+    text-align: right;
+}
+
+#tareasModal .table th:nth-child(9),  /* Proceso */
+#tareasModal .table td:nth-child(9) {
+    min-width: 200px;
+}
+
+#tareasModal .table th:nth-child(10),  /* Acciones */
+#tareasModal .table td:nth-child(10) {
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Estilos para los filtros */
+.filtros-wrapper {
+    background: linear-gradient(145deg, #ffffff, #f0f2f5);
+    border-radius: 0.8rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    overflow: hidden; /* Prevenir desbordamiento */
+}
+
+.filtros-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap; /* Permitir wrap en pantallas pequeñas */
+    width: 100%;
+}
+
+.filtro-grupo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 200px; /* Ancho mínimo para evitar compresión excesiva */
+    flex: 1;
+    max-width: calc(50% - 1rem); /* Evitar que los grupos sean demasiado anchos */
+}
+
+.filtro-grupo label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    margin: 0;
+    min-width: fit-content; /* Evitar que las etiquetas se rompan */
+}
+
+.filtro-grupo select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: white;
+    min-width: 120px; /* Ancho mínimo para el select */
+    max-width: 100%; /* Evitar desbordamiento */
+}
+
+.filtros-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.btn-limpiar-filtros {
+    padding: 0.5rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: white;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+/* Ajustes responsivos mejorados */
+@media (max-width: 1200px) {
+    .filtro-grupo {
+        max-width: 100%; /* En pantallas más pequeñas, permitir ancho completo */
+    }
+}
+
+@media (max-width: 768px) {
+    .filtros-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+    }
+    
+    .filtro-grupo {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .filtros-count,
+    .btn-limpiar-filtros {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --sidebar-width: 250px;
+    }
+
+    #sidebar {
+        transform: translateX(-100%);
+    }
+
+    #content {
+        left: 0;
+        width: 100%;
+        padding-top: var(--navbar-height);
+    }
+    
+    #content nav {
+        left: 0;
+        width: 100%;
+    }
+    
+    #sidebar.show {
+        transform: translateX(0);
+    }
+    
+    body.sidebar-show #content {
+        left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+    }
+    
+    body.sidebar-show #content nav {
+        left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+    }
+    
+    .table-responsive {
+        padding: 10px;
+    }
+}
+
+/* Forzar que el modal de tareas use todo el ancho posible */
+#tareasModal .modal-dialog {
+    max-width: 80vw !important;
+}
+
+/* Asegurar que las alertas de SweetAlert estén al frente */
+.swal2-container {
+    z-index: 3000 !important;
+}
+
+/* Asegurar que el formulario interno ocupe el 100% de ese ancho */
+#addTareaForm {
+    width: 100%;
+}
+
+/* Elevar los modales por encima del sidebar */
+.modal-backdrop {
+    z-index: 2050 !important;
+}
+.modal {
+    z-index: 2051 !important;
+}
+
+/* Styles for the process flow diagram */
+.flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.flow-step {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    color: #333;
+    font-size: 12px;
+    text-align: center;
+}
+
+.flow-step.active-step {
+    background-color: #3c8dbc;
+    color: #fff;
+    font-weight: bold;
+}
+
+.flow-arrow {
+    font-size: 14px;
+    color: #999;
+}
+
+/* Styles for the workflow display */
+.workflow-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.workflow-steps {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.workflow-steps > li {
+    margin-bottom: 10px;
+}
+
+.workflow-steps ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+.fadeIn {
+    animation: fadeIn 0.7s ease;
+}
+.fadeInUp {
+    animation: fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* --- CARDS Y GRIDS (de ente.css, adaptados) --- */
+.info-card, .admin-card, .ente-card {
+    background: white;
+    border-radius: var(--card-radius, 15px);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+}
+.member-card, .admin-member-card {
+    background: white;
+    border-radius: var(--card-radius, 15px);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease;
+}
+.member-card:hover, .admin-member-card:hover {
+    transform: translateY(-5px);
+}
+.member-avatar, .admin-member-avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+.members-grid, .admin-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+.activities-list, .admin-activities-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+.activity-card, .admin-activity-card {
+    background: white;
+    border-radius: var(--card-radius, 15px);
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease;
+}
+.activity-card:hover, .admin-activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.documents-grid, .admin-documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+.document-card, .admin-document-card {
+    background: white;
+    border-radius: var(--card-radius, 15px);
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-dark);
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease;
+}
+.document-card:hover, .admin-document-card:hover {
+    transform: translateY(-5px);
+    color: var(--accent-color);
+}
+.document-card i, .admin-document-card i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+/* --- TABS (de ente.css, adaptados) --- */
+.ente-tabs, .admin-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: var(--box-shadow);
+}
+.tab-btn, .admin-tab-btn {
+    padding: 1rem 2rem;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+.tab-btn:hover, .admin-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+.tab-btn.active, .admin-tab-btn.active {
+    background: var(--secondary-color);
+    color: white;
+}
+.tab-content, .admin-tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+.tab-content.active, .admin-tab-content.active {
+    display: block;
+}
+
+/* --- HERO (de ente.css, adaptados para admin si lo usas) --- */
+.admin-hero {
+    min-height: 60vh;
+    background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(52, 152, 219, 0.7)),
+                url("../img/background.jpg");
+    background-size: cover;
+    background-position: center;
+    margin-bottom: -50px;
+    padding: 50px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.admin-hero-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    color: var(--text-light);
+    animation: fadeIn 1s ease-out;
+}
+.admin-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: white;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.admin-hero-text h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1200px) {
+    .filtro-grupo, .admin-filtro-grupo {
+        max-width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .ente-hero-content, .admin-hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .ente-logo, .admin-logo {
+        width: 150px;
+        height: 150px;
+    }
+    .ente-hero-text h1, .admin-hero-text h1 {
+        font-size: 2rem;
+    }
+    .ente-tabs, .admin-tabs {
+        flex-direction: column;
+    }
+    .tab-btn, .admin-tab-btn {
+        width: 100%;
+        text-align: center;
+    }
+    .logo {
+        font-size: 1.8em;
+    }
+    .content {
+        padding: 0 15px;
+    }
+    .member-boxes, .admin-member-boxes {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    .members-grid,
+    .activities-list,
+    .documents-grid,
+    .admin-members-grid,
+    .admin-activities-list,
+    .admin-documents-grid {
+        grid-template-columns: 1fr;
+    }
+    .info-section, .admin-info-section {
+        padding: 20px;
+    }
+    .ente-details, .admin-details {
+        padding: 20px 15px;
+    }
+}
+
+/* Animaciones para vistas de actividad */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+.fadeIn {
+    animation: fadeIn 0.7s ease;
+}
+.fadeInUp {
+    animation: fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);
+}
