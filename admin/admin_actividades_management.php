@@ -38,10 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
                 if (isset($_POST['codigo_actividad'], $_POST['nombre_actividad'], $_POST['monto_financiamiento'], $_POST['id_ente'])) {
-                    $stmt = $pdo->prepare("INSERT INTO actividades_poi (codigo_actividad, nombre_actividad, meta, fecha_inicio, fecha_fin, monto_financiamiento, id_ente, estado_ejecucion, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $pdo->prepare("INSERT INTO actividades_poi (codigo_actividad, nombre_actividad, categoria, meta, fecha_inicio, fecha_fin, monto_financiamiento, id_ente, estado_ejecucion, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([
                         $_POST['codigo_actividad'],
                         $_POST['nombre_actividad'],
+                        $_POST['categoria'], // Allow any category, including "CAPACITACION"
                         $_POST['meta'] ?? null,
                         $_POST['fecha_inicio'] ?? null,
                         $_POST['fecha_fin'] ?? null,
@@ -55,9 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 break;
             case 'update':
                 if (isset($_POST['codigo_actividad'], $_POST['nombre_actividad'], $_POST['monto_financiamiento'], $_POST['id_ente'], $_POST['estado_ejecucion'])) {
-                    $stmt = $pdo->prepare("UPDATE actividades_poi SET nombre_actividad = ?, meta = ?, fecha_inicio = ?, fecha_fin = ?, monto_financiamiento = ?, id_ente = ?, estado_ejecucion = ?, observaciones = ? WHERE codigo_actividad = ?");
+                    $stmt = $pdo->prepare("UPDATE actividades_poi SET nombre_actividad = ?, categoria = ?, meta = ?, fecha_inicio = ?, fecha_fin = ?, monto_financiamiento = ?, id_ente = ?, estado_ejecucion = ?, observaciones = ? WHERE codigo_actividad = ?");
                     $stmt->execute([
                         $_POST['nombre_actividad'],
+                        $_POST['categoria'], // Allow updating the category
                         $_POST['meta'] ?? null,
                         $_POST['fecha_inicio'] ?? null,
                         $_POST['fecha_fin'] ?? null,
@@ -78,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 }
                 break;
         }
-    } catch (PDOException $e) {
-        $response = ['status' => 'error', 'message' => 'Error en la operación: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        $response = ['status' => 'error', 'message' => $e->getMessage()];
     }
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -169,14 +171,13 @@ if (isset($_SESSION['flash_message'])) {
                         <th>Código</th>
                         <th>Actividad Operativa</th>
                         <th>Tip.</th>
+                        <th>Escuela</th>
                         <th class="text-center">1T %</th>
                         <th class="text-center">2T %</th>
                         <th class="text-center">3T %</th>
                         <th class="text-center">4T %</th>
                         <th class="text-end">Monto</th>
                         <th>Estado</th>
-                        <th>Prioridad</th>
-                        <th>INFORME</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -191,8 +192,9 @@ if (isset($_SESSION['flash_message'])) {
                             </a>
                         </td>
                         <td><?php echo htmlspecialchars($actividad['nombre_actividad']); ?></td>
-                        <td><?php echo htmlspecialchars($actividad['categoria'] ?? 'CAPA'); ?></td>
-                        <td class="text-center"><?php echo number_format($actividad['porcentaje_1t'], 1); ?>%</td>
+                        <td><?php echo htmlspecialchars($actividad['categoria']); ?></td>
+                        <td><?php echo htmlspecialchars($actividad['escuela']); ?></td>
+                        <td class="text-center"><?php echo number_format($actividad['porcentaje_1t'], 1); ?>%</</td>
                         <td class="text-center"><?php echo number_format($actividad['porcentaje_2t'], 1); ?>%</td>
                         <td class="text-center"><?php echo number_format($actividad['porcentaje_3t'], 1); ?>%</td>
                         <td class="text-center"><?php echo number_format($actividad['porcentaje_4t'], 1); ?>%</td>
@@ -200,19 +202,17 @@ if (isset($_SESSION['flash_message'])) {
                         <td>
                             <?php
                             $estados_class = [
-                                'NO_INICIADA' => ['label' => 'PENDIENTE', 'class' => 'bg-warning text-dark'],
-                                'EN_PROGRESO' => ['label' => 'PROCESO', 'class' => 'bg-info text-dark'],
-                                'FINALIZADA'  => ['label' => 'FINALIZADO',  'class' => 'bg-success'],
-                                'CANCELADA'   => ['label' => 'CANCELADO',   'class' => 'bg-danger']
+                                'NO_INICIADA' => 'bg-warning text-dark',
+                                'EN_PROGRESO' => 'bg-info text-white',
+                                'FINALIZADA'  => 'bg-success text-white',
+                                'CANCELADA'   => 'bg-danger text-white'
                             ];
-                            $estado = $estados_class[$actividad['estado_ejecucion']] ?? ['label' => $actividad['estado_ejecucion'], 'class' => 'bg-secondary'];
+                            $estado_class = $estados_class[$actividad['estado_ejecucion']] ?? 'bg-secondary text-white';
                             ?>
-                            <span class="badge <?php echo $estado['class']; ?>">
-                                <?php echo $estado['label']; ?>
+                            <span class="badge <?php echo $estado_class; ?>">
+                                <?php echo $actividad['estado_ejecucion']; ?>
                             </span>
                         </td>
-                        <td><?php echo htmlspecialchars($actividad['prioridad'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($actividad['observaciones'] ?? ''); ?></td>
                         <td>
                             <button class="btn btn-sm btn-info" onclick="editActividad(<?php echo htmlspecialchars(json_encode($actividad)); ?>)">
                                 <i class='bx bx-edit'></i>
@@ -606,18 +606,31 @@ function editActividad(actividad) {
             <form id="importActividadesForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <strong>Formato esperado:</strong>
-                        <ul class="mb-0">
-                            <li>Centro/Grupo</li>
-                            <li>Código</li>
-                            <li>Actividad Operativa</li>
-                            <li>Tip.</li>
-                            <li>1T, 2T, 3T, 4T (%)</li>
-                            <li>Monto</li>
-                            <li>Estado</li>
-                            <li>Prioridad</li>
-                            <li>INFORME</li>
-                        </ul>
+                        <strong>Columnas requeridas:</strong>
+                        <ol class="mb-0">
+                            <li>Centro/Grupo (debe existir en la base de datos)</li>
+                            <li>Código (identificador único)</li>
+                            <li>Actividad Operativa (nombre/descripción)</li>
+                            <li>Tipo (CAPACITACION, INVESTIGACION, GESTION, ACTIVIDAD)</li>
+                            <li>Escuela (coincide con la del ente)</li>
+                            <li>1T % (porcentaje primer trimestre, 0-100)</li>
+                            <li>2T % (porcentaje segundo trimestre, 0-100)</li>
+                            <li>3T % (porcentaje tercer trimestre, 0-100)</li>
+                            <li>4T % (porcentaje cuarto trimestre, 0-100)</li>
+                            <li>Monto (financiamiento en soles)</li>
+                        </ol>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle"></i> La primera fila debe contener los nombres exactos de las columnas.
+                            </small>
+                            <br>
+                            <small class="text-muted">
+                                <i class="bx bx-link"></i> 
+                                <a href="../templates/actividades_template.xlsx" download>
+                                    Descargar plantilla Excel
+                                </a>
+                            </small>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Archivo Excel (.xlsx)</label>

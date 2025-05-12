@@ -85,7 +85,11 @@ CREATE TABLE actividades_poi (
 CREATE TABLE tareas_actividad (
     codigo_actividad VARCHAR(50) NOT NULL,
     codigo_tarea VARCHAR(50) NOT NULL, -- Identificador único de la tarea dentro de la actividad
-    descripcion TEXT,
+    descripcion ENUM(
+        'CAPACITACION_EJECUCION', 
+        'CAPACITACION_SERVICIOS', 
+        'CAPACITACION_CERTIFICACION'
+    ) NOT NULL, -- Restrict to the three specified tasks
     fecha_inicio DATE,
     fecha_fin DATE,
     estado_flujo ENUM(

@@ -1,171 +1,82 @@
 <?php
 return [
-    'CAPACITACION_EJECUCION' => [
-        'name' => 'Ejecución de Capacitación/Taller/Foro/Conversatorio',
-        'initial_state' => 'INICIO',
-        'states' => [
-            'INICIO' => [
-                'description' => 'Inicio del proceso',
-                'next' => 'EVAL_CGYC',
-                'required_docs' => ['Solicitud', 'Formato 14', 'Datos del expositor']
+    'CAPACITACION_SERVICIOS' => [
+        'name' => 'Requerimiento de Servicios por Terceros',
+        'steps' => [
+            'CGyC' => [
+                'descripcion' => 'Revisión inicial de la solicitud y documentos requeridos.',
+                'documentos' => ['TDR', 'Plan de trabajo', 'Formato de objetivos', 'Propuesta económica', 'RUC/CCI/Firma', 'CV'],
+                'estados_posibles' => ['ENVIADO_UIFIA', 'OBSERVADO']
             ],
-            'EVAL_CGYC' => [
-                'description' => 'Evaluación de Solicitud (CGyC)',
-                'next' => 'EVAL_UIFIA',
-                'responsible' => 'CGyC'
+            'UIFIA' => [
+                'descripcion' => 'Revisión formal y técnica de la solicitud.',
+                'documentos' => ['Solicitud de aprobación', 'Requerimiento en ERP'],
+                'estados_posibles' => ['ENVIADO_DDA', 'OBSERVADO', 'NO_PROCEDE']
             ],
-            'EVAL_UIFIA' => [
-                'description' => 'Evaluación UI-FIA',
-                'next' => null,
-                'conditions' => [
-                    'OBSERVADO' => [
-                        'next' => 'INICIO',
-                        'message' => 'Inscripción no procede',
-                        'retry_to' => 'INICIO'
-                    ],
-                    'APROBADO' => [
-                        'next' => 'EVAL_DDA',
-                        'message' => 'Procede evaluación DDA'
-                    ]
-                ],
-                'responsible' => 'UI-FIA'
+            'DDA' => [
+                'descripcion' => 'Evaluación de la solicitud y requisitos.',
+                'documentos' => ['Formato 14'],
+                'estados_posibles' => ['ENVIADO_ABASTECIMIENTOS', 'OBSERVADO']
             ],
-            'EVAL_DDA' => [
-                'description' => 'Evaluación DDA',
-                'next' => 'EVAL_DIPLA',
-                'required_docs' => ['Formato 14 firmado'],
-                'responsible' => 'DDA'
-            ],
-            'EVAL_DIPLA' => [
-                'description' => 'Evaluación DIPLA (Fondos POI)',
-                'next' => 'EVAL_DDA_RESPUESTA',
-                'conditions' => [
-                    'APROBADO' => [
-                        'next' => 'EVAL_DDA_RESPUESTA',
-                        'message' => 'Devuelto proveído conforme'
-                    ],
-                    'RECHAZADO' => [
-                        'next' => 'EVAL_DDA_RESPUESTA',
-                        'message' => 'Devuelto proveído inconforme'
-                    ]
-                ],
-                'responsible' => 'DIPLA'
-            ],
-            'EVAL_DDA_RESPUESTA' => [
-                'description' => 'Evaluación Final DDA',
-                'next' => null,
-                'conditions' => [
-                    'CONFORME' => [
-                        'next' => 'APROBADO',
-                        'message' => 'Tarea aprobada'
-                    ],
-                    'INCONFORME' => [
-                        'next' => 'EVAL_UIFIA',
-                        'message' => 'Devuelto a UI-FIA para revisión'
-                    ]
-                ],
-                'responsible' => 'DDA',
-                'is_final' => true
-            ],
-            'APROBADO' => [
-                'description' => 'Proceso Aprobado',
-                'is_final' => true
-            ],
-            'RECHAZADO' => [
-                'description' => 'Proceso Rechazado',
-                'is_final' => true
+            'ABASTECIMIENTOS' => [
+                'descripcion' => 'Verificación final con fondos POI.',
+                'documentos' => ['Formato 14'],
+                'estados_posibles' => ['CERRADO', 'OBSERVADO']
             ]
         ],
-        'events' => [
-            'EVENTO_1' => 'Reintento desde UI-FIA',
-            'EVENTO_2' => 'Evaluación en UI-FIA',
-            'EVENTO_3' => 'Evaluación en DDA',
-            'EVENTO_4' => 'Evaluación en DIPLA',
-            'EVENTO_5' => 'Respuesta Final DDA'
-        ]
+        'initial_state' => 'CGyC'
     ],
-    'CAPACITACION' => [
-        'name' => 'Ejecución de Capacitación/Taller/Foro/Conversatorio',
-        'initial_state' => 'INICIO',
-        'states' => [
-            'INICIO' => [
-                'description' => 'Inicio del proceso',
-                'next' => 'EVAL_CGYC',
-                'required_docs' => ['Solicitud', 'Formato 14', 'Datos del expositor']
+    'CAPACITACION_CERTIFICACION' => [
+        'name' => 'Certificación de Capacitación/Taller/Foro/Conversatorio',
+        'steps' => [
+            'CGyC' => [
+                'descripcion' => 'Revisión inicial de la solicitud de certificación.',
+                'documentos' => ['Oficio DDA', 'Informe de realización', 'Lista de asistentes', 'Encuesta de satisfacción'],
+                'estados_posibles' => ['ENVIADO_UIFIA', 'OBSERVADO']
             ],
-            'EVAL_CGYC' => [
-                'description' => 'Evaluación de Solicitud (CGyC)',
-                'next' => 'EVAL_UIFIA',
-                'responsible' => 'CGyC'
+            'UIFIA' => [
+                'descripcion' => 'Verificación formal de la solicitud.',
+                'documentos' => ['Solicitud de certificación'],
+                'estados_posibles' => ['ENVIADO_DDA', 'OBSERVADO']
             ],
-            'EVAL_UIFIA' => [
-                'description' => 'Evaluación UI-FIA',
-                'next' => null,
-                'conditions' => [
-                    'OBSERVADO' => [
-                        'next' => 'INICIO',
-                        'message' => 'Inscripción no procede',
-                        'retry_to' => 'INICIO'
-                    ],
-                    'APROBADO' => [
-                        'next' => 'EVAL_DDA',
-                        'message' => 'Procede evaluación DDA'
-                    ]
-                ],
-                'responsible' => 'UI-FIA'
-            ],
-            'EVAL_DDA' => [
-                'description' => 'Evaluación DDA',
-                'next' => 'EVAL_DIPLA',
-                'required_docs' => ['Formato 14 firmado'],
-                'responsible' => 'DDA'
-            ],
-            'EVAL_DIPLA' => [
-                'description' => 'Evaluación DIPLA (Fondos POI)',
-                'next' => 'EVAL_DDA_RESPUESTA',
-                'conditions' => [
-                    'APROBADO' => [
-                        'next' => 'EVAL_DDA_RESPUESTA',
-                        'message' => 'Devuelto proveído conforme'
-                    ],
-                    'RECHAZADO' => [
-                        'next' => 'EVAL_DDA_RESPUESTA',
-                        'message' => 'Devuelto proveído inconforme'
-                    ]
-                ],
-                'responsible' => 'DIPLA'
-            ],
-            'EVAL_DDA_RESPUESTA' => [
-                'description' => 'Evaluación Final DDA',
-                'next' => null,
-                'conditions' => [
-                    'CONFORME' => [
-                        'next' => 'APROBADO',
-                        'message' => 'Tarea aprobada'
-                    ],
-                    'INCONFORME' => [
-                        'next' => 'EVAL_UIFIA',
-                        'message' => 'Devuelto a UI-FIA para revisión'
-                    ]
-                ],
-                'responsible' => 'DDA',
-                'is_final' => true
-            ],
-            'APROBADO' => [
-                'description' => 'Proceso Aprobado',
-                'is_final' => true
-            ],
-            'RECHAZADO' => [
-                'description' => 'Proceso Rechazado',
-                'is_final' => true
+            'DDA' => [
+                'descripcion' => 'Evaluación final y emisión del certificado.',
+                'documentos' => ['Certificado emitido'],
+                'estados_posibles' => ['CERRADO', 'OBSERVADO']
             ]
         ],
-        'events' => [
-            'EVENTO_1' => 'Reintento desde UI-FIA',
-            'EVENTO_2' => 'Evaluación en UI-FIA',
-            'EVENTO_3' => 'Evaluación en DDA',
-            'EVENTO_4' => 'Evaluación en DIPLA',
-            'EVENTO_5' => 'Respuesta Final DDA'
-        ]
+        'initial_state' => 'CGyC'
+    ],
+    'CAPACITACION_EJECUCION' => [
+        'name' => 'Capacitación/Taller/Foro/Conversatorio (Ejecución)',
+        'steps' => [
+            'CGyC' => [
+                'descripcion' => 'Recepción y revisión de la solicitud de ejecución.',
+                'documentos' => ['Formato 14', 'Datos del expositor'],
+                'estados_posibles' => ['ENVIADO_UIFIA', 'OBSERVADO']
+            ],
+            'UIFIA' => [
+                'descripcion' => 'Revisión formal y técnica de la solicitud.',
+                'documentos' => ['Solicitud de ejecución'],
+                'estados_posibles' => ['ENVIADO_DDA', 'OBSERVADO', 'NO_PROCEDE']
+            ],
+            'DDA' => [
+                'descripcion' => 'Evaluación de la solicitud y remisión a DIPLA.',
+                'documentos' => ['Formato 14'],
+                'estados_posibles' => ['ENVIADO_DIPLA', 'OBSERVADO']
+            ],
+            'DIPLA' => [
+                'descripcion' => 'Revisión de fondos POI asignados.',
+                'documentos' => ['Formato 14'],
+                'estados_posibles' => ['PROVEIDO_CONFORME', 'PROVEIDO_INCONFORME']
+            ],
+            'DDA_FINAL' => [
+                'descripcion' => 'Análisis del proveído y emisión de aprobación final.',
+                'documentos' => ['Aprobación final'],
+                'estados_posibles' => ['CERRADO', 'OBSERVADO']
+            ]
+        ],
+        'initial_state' => 'CGyC'
     ]
 ];
+?>
